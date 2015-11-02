@@ -3,7 +3,7 @@ from variables import *
 
 class Creature(object):
 
-    def __init__(self, creatureType, strength, agility, intelligence, position):
+    def __init__(self, strength, agility, intelligence):
         """ Base creature class. Three types to start: wolf eats deer. Deer eats bush. Bush eats sun.
         base stats are strength, agility, intelligence. These three make up the other stats as in:
         hp (health points) = Str * 8
@@ -39,9 +39,9 @@ class Creature(object):
         self.sight = 1 + intelligence/3
         self.damage = strength/2 + agility/3
 
-        def eat(self, food):
-            self.Stamina += food.Stamina
-            if self.Stamina > self.maxStamina:  self.Stamina = self.maxStamina
+    def eat(self, food):
+        self.Stamina += food.Stamina
+        if self.Stamina > self.maxStamina:  self.Stamina = self.maxStamina
             
 
         """def poi(sight, position):
