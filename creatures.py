@@ -2,7 +2,6 @@ from world import *
 from variables import *
 
 class Creature(object):
-    wolves, deers, bushes = 0, 0, 0
 
     def __init__(self, creatureType, strength, agility, intelligence, position):
         """ Base creature class. Three types to start: wolf eats deer. Deer eats bush. Bush eats sun.
@@ -22,12 +21,11 @@ class Creature(object):
 
         if health & stamina > maxStamina & maxHealth, birth.
         """
-        self.type = creatureType
-        self.edible = abs(creatureType -1)
         self.level = 0
         self.experience = 0.0
-        self.levelRatio = 1.15
-        self.position = position
+        self.experienceRatio = 1.05
+        self.levelRatio = 1.06   ##int(2 ** (1.06 * x)
+        # self.position = position
         self.strength = strength
         self.agility = agility
         self.intelligence = intelligence
@@ -41,45 +39,50 @@ class Creature(object):
         self.sight = 1 + intelligence/3
         self.damage = strength/2 + agility/3
 
-        if self.type == 3: # Wolf
-            self.color = [0.451, 0.49, 0.518]
-            Creature.wolves += 1
-            self.ID = [self.type, self.wolves]
-        elif self.type == 2: # deer
-            self.color = [0.75, 0.50, 0.218]
-            Creature.deers += 1
-            self.ID = [self.type, self.deers]
-        elif self.type == 1: # bush
-            self.color = [0.15, 0.70, 0.15]
-            Creature.bushes += 1
-            self.ID = [self.type, self.bushes]
-        elif self.type == 0:
-            self.color = [ 0, 0, 0 ]
+        def eat(self, food):
+            self.Stamina += food.Stamina
+            if self.Stamina > self.maxStamina:  self.Stamina = self.maxStamina
+            
 
-        """if self.type == 3: # Wolf
-            self.color = [1-1/self.initiative**2,1/self.move**0.5,1/self.essence**0.5]
-            Creature.wolves += 1
-            self.ID = [self.type, self.wolves]
-        elif self.type == 2: # deer
-            self.color = [1/self.initiative**0.5,1/self.essence**0.5,1-1/self.move**2]
-            Creature.deers += 1
-            self.ID = [self.type, self.deers]
-        elif self.type == 1: # bush
-            self.color = [1/self.essence**0.5, 1-1/self.essence**0.5, 1/self.essence**0.5]
-            Creature.bushes += 1
-            self.ID = [self.type, self.bushes]
-        elif self.type == 0:
-            self.color = [ 0, 0, 0 ]"""
+        """def poi(sight, position):
+                                    nRange = zip(xrange(-sight, sight+1), xrange(0, 2*sight+1))
+                                    surround = [[[-1,-1] for y in xrange(0, 2*sight+1) ] for x in xrange(0, 2*sight+1)]
+                                    for y in nRange:
+                                        if (position[0]+y[0] >= 0) and (position[0]+y[0] < s):
+                                            for x in nRange:
+                                                if (position[1]+x[0] >= 0) and (position[1]+x[0] < s):
+                                                    surround[y[1]][x[1]] = list(field[position[0]+y[0]][position[1]+x[0]][1].position)
+                                    return surround"""
 
-        def poi(sight, position):
-            nRange = zip(xrange(-sight, sight+1), xrange(0, 2*sight+1))
-            surround = [[[-1,-1] for y in xrange(0, 2*sight+1) ] for x in xrange(0, 2*sight+1)]
-            for y in nRange:
-                if (position[0]+y[0] >= 0) and (position[0]+y[0] < s):
-                    for x in nRange:
-                        if (position[1]+x[0] >= 0) and (position[1]+x[0] < s):
-                            surround[y[1]][x[1]] = list(field[position[0]+y[0]][position[1]+x[0]][1].position)
-            return surround
+"""if self.type == 3: # Wolf
+    self.color = [0.451, 0.49, 0.518]
+    Creature.wolves += 1
+    self.ID = [self.type, self.wolves]
+elif self.type == 2: # deer
+    self.color = [0.75, 0.50, 0.218]
+    Creature.deers += 1
+    self.ID = [self.type, self.deers]
+elif self.type == 1: # bush
+    self.color = [0.15, 0.70, 0.15]
+    Creature.bushes += 1
+    self.ID = [self.type, self.bushes]
+elif self.type == 0:
+    self.color = [ 0, 0, 0 ]"""
+
+class Wolf(Creature):
+    color = [0.451, 0.49, 0.518]
+    edible = "Deer"
+
+class Deer(Creature):
+    color = [0.75, 0.50, 0.218]
+    edible = "Bush"
+
+class Bush(Creature):
+    color = [0.15, 0.70, 0.15]
+    edible = "Sun"
+
+
+        
 
 """
     def __init__(self, creatType, position):
