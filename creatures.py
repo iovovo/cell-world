@@ -3,7 +3,7 @@ from variables import *
 
 class Creature(object):
 
-    def __init__(self, strength, agility, intelligence):
+    def __init__(self, strength, agility, intelligence, position):
         """ Base creature class. Three types to start: wolf eats deer. Deer eats bush. Bush eats sun.
         base stats are strength, agility, intelligence. These three make up the other stats as in:
         hp (health points) = Str * 8
@@ -25,7 +25,7 @@ class Creature(object):
         self.experience = 0.0
         self.experienceRatio = 1.05
         self.levelRatio = 1.06   ##int(2 ** (1.06 * x)
-        # self.position = position
+        self.position = position
         self.strength = strength
         self.agility = agility
         self.intelligence = intelligence
@@ -39,20 +39,22 @@ class Creature(object):
         self.sight = 1 + intelligence/3
         self.damage = strength/2 + agility/3
 
+    def move(self, position):
+        self.position = position
+
     def eat(self, food):
         self.Stamina += food.Stamina
         if self.Stamina > self.maxStamina:  self.Stamina = self.maxStamina
             
-
-        """def poi(sight, position):
-                                    nRange = zip(xrange(-sight, sight+1), xrange(0, 2*sight+1))
-                                    surround = [[[-1,-1] for y in xrange(0, 2*sight+1) ] for x in xrange(0, 2*sight+1)]
-                                    for y in nRange:
-                                        if (position[0]+y[0] >= 0) and (position[0]+y[0] < s):
-                                            for x in nRange:
-                                                if (position[1]+x[0] >= 0) and (position[1]+x[0] < s):
-                                                    surround[y[1]][x[1]] = list(field[position[0]+y[0]][position[1]+x[0]][1].position)
-                                    return surround"""
+    def poi(sight, position):
+        nRange = zip(xrange(-sight, sight+1), xrange(0, 2*sight+1))
+        surround = [[ None for y in xrange(0, 2*sight+1) ] for x in xrange(0, 2*sight+1)]
+        for y in nRange:
+            if (position[0]+y[0] >= 0) and (position[0]+y[0] < s):
+                for x in nRange:
+                    if (position[1]+x[0] >= 0) and (position[1]+x[0] < s):
+                        surround[y[1]][x[1]] = [ position[0]+y[0], position[1]+x[0] ]
+        return surround
 
 """if self.type == 3: # Wolf
     self.color = [0.451, 0.49, 0.518]
