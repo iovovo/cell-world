@@ -23,10 +23,13 @@ def printField():
 def roam():
 	sortActionOrder(actionOrder)
 	for turn in range(len(actionOrder)):
-		actionOrder[turn].chooseAction(world)
-	# print map(lambda x: [x.initiative, x.__class__.__name__], actionOrder)
-	# print actionOrder[0].__class__.__name__, actionOrder[0].position, actionOrder[0].edible, actionOrder[0].findFood(world)
-	# print map(lambda x: world.getCreature(x[0], x[1]), actionOrder[0].surroundings(world))
+		actionOrder[turn].chooseAction(world, actionOrder)
+		actionOrder[turn].passiveActions()
+		# print map(lambda x: [x.initiative, x.__class__.__name__], actionOrder)
+		# print actionOrder[0].__class__.__name__, actionOrder[0].position, actionOrder[0].edible, actionOrder[0].findFood(world)
+		print actionOrder[-1].__class__.__name__, actionOrder[-1].position, actionOrder[-1].health, "/", actionOrder[-1].maxHealth, "-", actionOrder[-1].stamina, "/", actionOrder[-1].maxStamina
+		# print map(lambda x: world.getCreature(x[0], x[1]), actionOrder[0].surroundings(world))
+
 
 
 def refresh2d(width, height):
@@ -51,10 +54,10 @@ def draw():                                            # ondraw is called all th
 	glLoadIdentity()                                   # reset position
 	refresh2d(width, height)                           # set mode to 2d
 	###
-	global pause
-	if pause == 0:
-		roam()
-		pause = 1
+	# global pause
+	# if pause == 0:
+	# 	roam()
+	# 	pause = 1
 	time.sleep(0.1)
 	roam()
 	printField()

@@ -13,6 +13,7 @@ width, height = 400, 400                               # window size
 multW, multH = width/size, height/size
 
 pause = 0
+numberOfCreatures = [0, 0, 1]
 
 def rollDice(sides):
     if sides <= 1:

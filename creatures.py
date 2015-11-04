@@ -37,21 +37,20 @@ class Creature(object):
         if self.stamina > self.maxStamina:  self.stamina = self.maxStamina
         self.move(food.position, world)
 
-    def surroundings(self, world):
-        return [[ [y, x] if ( (y >= 0 and y < size) and (x >= 0 and x < size) ) else None for y in range(self.position[0]-self.sight, self.position[1]+self.sight+1) ] for x in range(self.position[0]-self.sight, self.position[1]+self.sight+1)]
+    def surroundings(self):
+        return [[ [y, x] if ( (y >= 0 and y < size) and (x >= 0 and x < size) ) else [-1,-1] for y in range(self.position[0]-self.sight, self.position[1]+self.sight+1) ] for x in range(self.position[0]-self.sight, self.position[1]+self.sight+1)]
 
     def findFood(self, world):
         preys = []
-        surround = self.surroundings(world)
+        surround = self.surroundings()
         if self.sight > self.movement:
             searchRange = len(surround) - (self.sight + self.movement)
         else:
             searchRange = len(surround)
         for y in range(searchRange):
             for x in range(searchRange):
-                if surround[y][x] != None:
-                    if world.getCreature(surround[y][x][0], surround[y][x][1]).__class__.__name__ == self.edible:
-                        preys.append(surround[y][x])
+                if (surround[y][x] != [-1,-1]) and (world.getCreature(surround[y][x][0], surround[y][x][1]).__class__.__name__ == self.edible):
+                    preys.append(surround[y][x])
         if len(preys) != 0:
             return preys[random.randint(0,len(preys)-1)]
         else:
@@ -62,8 +61,13 @@ class Creature(object):
         if target.health <= 0:
             self.eat(target)
 
+    def passiveActions(self):
+        if (self.stamina >= self.maxStamina * 0.5) and (self.health != self.maxHealth):
+            self.health += 1
+            if self.stamina > self.maxStamina:  self.stamina = self.maxHealth
 
-    def chooseAction(self, world):
+
+    def chooseAction(self, world, actionOrder):
         if self.stamina <= 0.7*self.maxStamina:
             self.stamina -= 2
             target = self.findFood(world)
@@ -87,14 +91,30 @@ class Deer(Creature):
 class Bush(Creature):
     color = [0.15, 0.70, 0.15]
     edible = "Sun"
-    def chooseAction(self, world):
+
+    def reproduce(self, world, actionOrder):
+        emptySpots = []
+        surround = self.surroundings()
+        for y in range(len(surround)):
+            for x in range(len(surround)):
+                if surround[y][x] != [-1,-1]:
+                    creature = world.getCreature(surround[y][x][0], surround[y][x][1])
+                    if creature == None:
+                        emptySpots.append(surround[y][x])
+        if len(emptySpots) != 0:
+            birthSpot = emptySpots[random.randint(0,len(emptySpots)-1)]
+            self.stamina = self.stamina / 3
+            self.health = self.health / 3
+            actionOrder.append(Bush(rollDice(10), rollDice(0), rollDice(0), birthSpot))
+            world.setCreature( birthSpot[0], birthSpot[1], actionOrder[-1])
+
+    def chooseAction(self, world, actionOrder):
         if self.stamina != self.maxStamina:
-            self.stamina -= 2
             self.eat()
         elif self.stamina == self.maxStamina and self.health == self.maxHealth:
-            # self.reproduce()
+            self.reproduce(world, actionOrder)
             self.stamina -= 2
             pass
 
     def eat(self):
-        self.stamina += 2 +self.strength/6
+        self.stamina += 1
