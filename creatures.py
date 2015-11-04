@@ -4,23 +4,11 @@ from variables import *
 class Creature(object):
 
     def __init__(self, strength, agility, intelligence, position):
-        """ Base creature class. Three types to start: wolf eats deer. Deer eats bush. Bush eats sun.
-        base stats are strength, agility, intelligence. These three make up the other stats as in:
-        hp (health points) = Str * 8
-        stamina = str * 4
-        initiative = agi / 2
-        movement = 1 + agi / 5
-        sight = 1 + int / 3
-        damage = str / 2 + agi / 3
-
-        if stamina => maxStamina * 0.7: health += 1
-        if stamina < maxStamina * 0.3: health -= 1
-        if stamina < maxStamina * 0.1: health -= 2
-
+        """ Base creature class. Three types to start: wolf eats deer. Deer eats bush. Bush eats sun.               Base stats are strength, agility, intelligence. These three make up the other stats as in:
+        hp (health points) = Str * 8                stamina = str * 4                 initiative = agi / 2                  movement = 1 + agi / 5                  sight = 1 + int / 3                     damage = str / 2 + agi / 3
+        if stamina => maxStamina * 0.7: health += 1             if stamina < maxStamina * 0.3: health -= 1          if stamina < maxStamina * 0.1: health -= 2
         eating restores stamina.
-
-        if health & stamina > maxStamina & maxHealth, birth.
-        """
+        if health & stamina > maxStamina & maxHealth, birth."""
         self.level = 0
         self.experience = 0.0
         self.experienceRatio = 1.05
@@ -40,12 +28,17 @@ class Creature(object):
         self.damage = strength/2 + agility/3
 
     def move(self, position):
+        world.setCreature(position[0], position[1], None)
         self.position = position
+        world.setCreature(position[0], position[1], self)
 
     def eat(self, food):
         self.Stamina += food.Stamina
         if self.Stamina > self.maxStamina:  self.Stamina = self.maxStamina
-            
+
+    def surroundings(self, world):
+        return [[ [y, x] if ( (y >= 0 and y < size) and (x >= 0 and x <= size) ) else None for y in range(self.position[0]-self.sight, self.position[1]+self.sight+1) ] for x in range(self.position[0]-self.sight, self.position[1]+self.sight+1)]
+
     def poi(sight, position):
         nRange = zip(xrange(-sight, sight+1), xrange(0, 2*sight+1))
         surround = [[ None for y in xrange(0, 2*sight+1) ] for x in xrange(0, 2*sight+1)]
@@ -56,20 +49,6 @@ class Creature(object):
                         surround[y[1]][x[1]] = [ position[0]+y[0], position[1]+x[0] ]
         return surround
 
-"""if self.type == 3: # Wolf
-    self.color = [0.451, 0.49, 0.518]
-    Creature.wolves += 1
-    self.ID = [self.type, self.wolves]
-elif self.type == 2: # deer
-    self.color = [0.75, 0.50, 0.218]
-    Creature.deers += 1
-    self.ID = [self.type, self.deers]
-elif self.type == 1: # bush
-    self.color = [0.15, 0.70, 0.15]
-    Creature.bushes += 1
-    self.ID = [self.type, self.bushes]
-elif self.type == 0:
-    self.color = [ 0, 0, 0 ]"""
 
 class Wolf(Creature):
     color = [0.451, 0.49, 0.518]
@@ -83,8 +62,10 @@ class Bush(Creature):
     color = [0.15, 0.70, 0.15]
     edible = "Sun"
 
+#function to get the key value of initiative to sort the creatures action order.
+def getKey(creature):
+    return creature.initiative
 
-        
 
 """
     def __init__(self, creatType, position):
