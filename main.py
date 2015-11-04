@@ -16,21 +16,17 @@ def printField():
 		for x in xrange(size):
 			glColor3f(world.map[y][x][0].color[0], world.map[y][x][0].color[1], world.map[y][x][0].color[2])
 			draw_rect(x*multW, y*multH, multW, multH)
-			if world.map[y][x][1] != None:
+			if world.getCreature(y,x) != None:
 				glColor3f(world.map[y][x][1].color[0], world.map[y][x][1].color[1], world.map[y][x][1].color[2])
 				draw_rect(x*multW+border, y*multH+border, multW-2*border, multH-2*border)
 
-
-
 def roam():
-	actionOrder.sort(key=getKey, reverse=True)
-	y = actionOrder[0].surroundings(world)
-	print y
-	for rows in range(len(y)):
-		print y[rows]
-
-	print actionOrder[0].initiative
-	#print map(lambda x: [x.initiative, x.__class__.__name__], actionOrder)
+	sortActionOrder(actionOrder)
+	for turn in range(len(actionOrder)):
+		actionOrder[turn].chooseAction(world)
+	# print map(lambda x: [x.initiative, x.__class__.__name__], actionOrder)
+	# print actionOrder[0].__class__.__name__, actionOrder[0].position, actionOrder[0].edible, actionOrder[0].findFood(world)
+	# print map(lambda x: world.getCreature(x[0], x[1]), actionOrder[0].surroundings(world))
 
 
 def refresh2d(width, height):
@@ -59,8 +55,8 @@ def draw():                                            # ondraw is called all th
 	if pause == 0:
 		roam()
 		pause = 1
-
-	# roam()
+	time.sleep(0.1)
+	roam()
 	printField()
 
 

@@ -36,6 +36,12 @@ def sparkles(world):
 		actionOrder.append(Bush(rollDice(10), rollDice(0), rollDice(0), [y,x]))
 		world.setCreature( y, x, actionOrder[-1])
 
+def sortActionOrder(actionOder):
+	actionOrder.sort(key=getKey, reverse=True)
+
+#function to get the key value of initiative to sort the creatures action order.
+def getKey(creature):
+    return creature.initiative
 
 world = World()
 sparkles(world)

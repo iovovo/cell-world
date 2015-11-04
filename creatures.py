@@ -27,27 +27,53 @@ class Creature(object):
         self.sight = 1 + intelligence/3
         self.damage = strength/2 + agility/3
 
-    def move(self, position):
-        world.setCreature(position[0], position[1], None)
+    def move(self, position, world):
+        world.setCreature(self.position[0], self.position[1], None)
         self.position = position
         world.setCreature(position[0], position[1], self)
 
-    def eat(self, food):
-        self.Stamina += food.Stamina
-        if self.Stamina > self.maxStamina:  self.Stamina = self.maxStamina
+    def eat(self, food, world):
+        self.stamina += food.stamina
+        if self.stamina > self.maxStamina:  self.stamina = self.maxStamina
+        self.move(food.position, world)
 
     def surroundings(self, world):
-        return [[ [y, x] if ( (y >= 0 and y < size) and (x >= 0 and x <= size) ) else None for y in range(self.position[0]-self.sight, self.position[1]+self.sight+1) ] for x in range(self.position[0]-self.sight, self.position[1]+self.sight+1)]
+        return [[ [y, x] if ( (y >= 0 and y < size) and (x >= 0 and x < size) ) else None for y in range(self.position[0]-self.sight, self.position[1]+self.sight+1) ] for x in range(self.position[0]-self.sight, self.position[1]+self.sight+1)]
 
-    def poi(sight, position):
-        nRange = zip(xrange(-sight, sight+1), xrange(0, 2*sight+1))
-        surround = [[ None for y in xrange(0, 2*sight+1) ] for x in xrange(0, 2*sight+1)]
-        for y in nRange:
-            if (position[0]+y[0] >= 0) and (position[0]+y[0] < s):
-                for x in nRange:
-                    if (position[1]+x[0] >= 0) and (position[1]+x[0] < s):
-                        surround[y[1]][x[1]] = [ position[0]+y[0], position[1]+x[0] ]
-        return surround
+    def findFood(self, world):
+        preys = []
+        surround = self.surroundings(world)
+        if self.sight > self.movement:
+            searchRange = len(surround) - (self.sight + self.movement)
+        else:
+            searchRange = len(surround)
+        for y in range(searchRange):
+            for x in range(searchRange):
+                if surround[y][x] != None:
+                    if world.getCreature(surround[y][x][0], surround[y][x][1]).__class__.__name__ == self.edible:
+                        preys.append(surround[y][x])
+        if len(preys) != 0:
+            return preys[random.randint(0,len(preys)-1)]
+        else:
+            return None
+
+    def attack(self, target):
+        target.health -= self.damage
+        if target.health <= 0:
+            self.eat(target)
+
+
+    def chooseAction(self, world):
+        if self.stamina <= 0.7*self.maxStamina:
+            self.stamina -= 2
+            target = self.findFood(world)
+            if target != None:
+                self.eat(world.getCreature(target[0], target[1]), world)
+        else:
+            self.stamina -= 2
+
+
+
 
 
 class Wolf(Creature):
@@ -61,79 +87,14 @@ class Deer(Creature):
 class Bush(Creature):
     color = [0.15, 0.70, 0.15]
     edible = "Sun"
+    def chooseAction(self, world):
+        if self.stamina != self.maxStamina:
+            self.stamina -= 2
+            self.eat()
+        elif self.stamina == self.maxStamina and self.health == self.maxHealth:
+            # self.reproduce()
+            self.stamina -= 2
+            pass
 
-#function to get the key value of initiative to sort the creatures action order.
-def getKey(creature):
-    return creature.initiative
-
-
-"""
-    def __init__(self, creatType, position):
-        self.ageLimit = 40 #( (4-creatType) * 4 )
-        self.birthLimit = 1
-        self.age = 0
-        self.birthCount = 0
-        self.mStats = parentMStats
-        # poner comprobaciones de age y births para ver si puede o no puede seguir teniendo children o si ya es demasiado viejo
-        mBaseStats = numpy.random.normal(1.005, 0.01, 4)
-        for x in range(4):
-            self.mStats[x] *= mBaseStats[x]
-        self.ID = [0,0]
-        self.type = creatType
-        self.edible = abs(creatType -1)
-        self.initiative = self.mStats[0]*self.bStats[creatType][0]
-        self.essence = self.mStats[1]*self.bStats[creatType][1]
-        self.hp = self.essence
-        self.sight = self.mStats[2]*self.bStats[creatType][2]
-        self.move = self.mStats[3]*self.bStats[creatType][3]
-        self.position = position
-        if self.type == 3: # Wolf
-            self.color = [1-1/self.initiative**2,1/self.move**0.5,1/self.essence**0.5]
-            Creature.wolves += 1
-            self.ID = [self.type, self.wolves]
-            self.birthLimit = 2
-        elif self.type == 2: # deer
-            self.color = [1/self.initiative**0.5,1/self.essence**0.5,1-1/self.move**2]
-            Creature.deers += 1
-            self.ID = [self.type, self.deers]
-            self.birthLimit = 1
-        elif self.type == 1: # bush
-            self.color = [1/self.essence**0.5, 1-1/self.essence**0.5, 1/self.essence**0.5]
-            Creature.bushes += 1
-            self.ID = [self.type, self.bushes]
-            self.birthLimit = 10
-        elif self.type == 0:
-            self.color = [ 0, 0, 0 ]
-
-    def moves(self, fPos):
-        global field, newField
-        newField[ fPos[0] ][ fPos[1] ] = copy.deepcopy(field[ self.position[0] ][ self.position[1] ])
-        newField[ fPos[0] ][ fPos[1] ][1].position = [ fPos[0], fPos[1] ]
-        field[self.position[0]][self.position[1]][1].dies()
-        newField[self.position[0]][self.position[1]][1].dies()
-    def eat(self, food):
-        global field, newField
-        # when mutations are added, check if carnivorous before type so meat eating plants can eat properly
-        if self.type == 1:
-            self.hp += 2
-        elif self.type == 2:
-            self.hp += (food.hp / 10)
-            self.moves( food.position )
-        elif self.type == 3:
-            self.hp += food.hp / 4
-            self.moves( food.position )
-        if self.hp > self.essence:
-            self.hp = self.essence
-    def dies(self):
-
-    def poi(self):
-        sght = int(self.sight)
-        nRange = zip(xrange(-sght, sght+1), xrange(0, 2*sght+1))
-        nField = [[[-1,-1] for y in xrange(0, 2*sght+1) ] for x in xrange(0, 2*sght+1)]
-        for y in nRange:
-            if (self.position[0]+y[0] >= 0) and (self.position[0]+y[0] < s):
-                for x in nRange:
-                    if (self.position[1]+x[0] >= 0) and (self.position[1]+x[0] < s):
-                        nField[y[1]][x[1]] = list(field[self.position[0]+y[0]][self.position[1]+x[0]][1].position)
-        return nField
-"""
+    def eat(self):
+        self.stamina += 2 +self.strength/6
