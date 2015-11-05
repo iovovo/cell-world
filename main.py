@@ -14,8 +14,8 @@ from creatures import *
 def printField():
 	for y in xrange(size):
 		for x in xrange(size):
-			glColor3f(world.map[y][x][0].color[0], world.map[y][x][0].color[1], world.map[y][x][0].color[2])
-			draw_rect(x*multW, y*multH, multW, multH)
+			# glColor3f(world.map[y][x][0].color[0], world.map[y][x][0].color[1], world.map[y][x][0].color[2])
+			# draw_rect(x*multW, y*multH, multW, multH)
 			if world.getCreature(y,x) != None:
 				glColor3f(world.map[y][x][1].color[0], world.map[y][x][1].color[1], world.map[y][x][1].color[2])
 				draw_rect(x*multW+border, y*multH+border, multW-2*border, multH-2*border)

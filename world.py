@@ -31,8 +31,9 @@ def sparkles(world):
 		actionOrder.append(Deer(rollDice(4), rollDice(6), rollDice(5), [y,x]))
 		world.setCreature( y, x, actionOrder[-1])
 	for i in range(numberOfCreatures[2]):
-		y = random.randint(0,size-1)
-		x = random.randint(0,size-1)
+		# y = random.randint(0,size-1)
+		# x = random.randint(0,size-1)
+		y, x = 0, 0
 		actionOrder.append(Bush(rollDice(10), rollDice(0), rollDice(0), [y,x]))
 		world.setCreature( y, x, actionOrder[-1])
 

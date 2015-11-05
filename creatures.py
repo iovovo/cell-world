@@ -112,7 +112,7 @@ class Bush(Creature):
         if self.stamina != self.maxStamina:
             self.eat()
         elif self.stamina == self.maxStamina and self.health == self.maxHealth:
-            self.reproduce(world, actionOrder)
+            # self.reproduce(world, actionOrder)
             self.stamina -= 2
             pass
 
