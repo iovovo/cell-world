@@ -14,16 +14,20 @@ from creatures import *
 def printField():
 	for y in xrange(size):
 		for x in xrange(size):
-			glColor3f(worldMap[y][x][0].color[0], worldMap[y][x][0].color[1], worldMap[y][x][0].color[2])
-			draw_rect(x*multW, y*multH, multW, multH)
-			if len(worldMap[y][x]) > 1:
-				glColor3f(worldMap[y][x][1].color[0], worldMap[y][x][1].color[1], worldMap[y][x][1].color[2])
+			# glColor3f(world.map[y][x][0].color[0], world.map[y][x][0].color[1], world.map[y][x][0].color[2])
+			# draw_rect(x*multW, y*multH, multW, multH)
+			if world.getCreature(y,x) != None:
+				glColor3f(world.map[y][x][1].color[0], world.map[y][x][1].color[1], world.map[y][x][1].color[2])
 				draw_rect(x*multW+border, y*multH+border, multW-2*border, multH-2*border)
 
-
-#takes the turn of the creatures in the initiative order.
 def roam():
-	pass
+	sortActionOrder(actionOrder)
+	for turn in range(len(actionOrder)):
+		actionOrder[turn].chooseAction(world, actionOrder)
+		actionOrder[turn].passiveActions()
+		# printStats(actionOrder[turn])
+
+
 
 def refresh2d(width, height):
 	glViewport(0, 0, width, height)
@@ -46,15 +50,17 @@ def draw():                                            # ondraw is called all th
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT) # clear the screen
 	glLoadIdentity()                                   # reset position
 	refresh2d(width, height)                           # set mode to 2d
-
-
+	###
+	# global pause
+	# if pause == 0:
+	# 	roam()
+	# 	pause = 1
+	time.sleep(delay)
 	roam()
-
 	printField()
-	# oldCount = [Creature.bushes, Creature.deers, Creature.wolves]
-	# if oldCount == newCount:
-		# return
 
+
+	###
 	glutSwapBuffers()                                  # important for double buffering
 
 glutInit()                                             # initialize glut
