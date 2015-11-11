@@ -25,7 +25,7 @@ def roam():
 	for turn in range(len(actionOrder)):
 		actionOrder[turn].chooseAction(world, actionOrder)
 		actionOrder[turn].passiveActions()
-		printStats(actionOrder[turn])
+		# printStats(actionOrder[turn])
 
 
 

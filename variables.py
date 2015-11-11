@@ -12,7 +12,7 @@ multW, multH = width/size, height/size
 
 pause = 0
 numberOfCreatures = [size/2, size, size*2]
-numberOfCreatures = [0,0,1]
+numberOfCreatures = [1,1,1]
 
 def rollDice(sides):
     if sides <= 1:

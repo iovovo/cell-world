@@ -27,6 +27,9 @@ class Creature(object):
         self.sight = 1 + intelligence/3
         self.damage = strength/2 + agility/3
 
+    def die(self):
+        pass
+
     def move(self, position, world):
         world.setCreature(self.position[0], self.position[1], None)
         self.position = position
@@ -68,6 +71,10 @@ class Creature(object):
             self.health += 1
             if self.stamina > self.maxStamina:  self.stamina = self.maxStamina
             if self.health > self.maxHealth:  self.health = self.maxHealth
+        elif self.stamina <= self.maxStamina * 0.25:
+            self.health -= 1
+        if self.health <= 0:
+            self.die()
 
 
     def chooseAction(self, world, actionOrder):
