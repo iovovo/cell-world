@@ -38,7 +38,9 @@ class Creature(object):
         self.move(food.position, world)
 
     def surroundings(self):
-        return [[ [y, x] if ( (y >= 0 and y < size) and (x >= 0 and x < size) ) else [-1,-1] for y in range(self.position[0]-self.sight, self.position[1]+self.sight+1) ] for x in range(self.position[0]-self.sight, self.position[1]+self.sight+1)]
+        yRange = range(self.position[0]-self.sight, self.position[0]+self.sight+1)
+        xRange = range(self.position[1]-self.sight, self.position[1]+self.sight+1)
+        return [[ [y, x] if ( (y >= 0) and (y < size) and (x >= 0) and (x < size) ) else [-1,-1] for y in yRange ] for x in xRange]
 
     def findFood(self, world):
         preys = []
@@ -64,7 +66,8 @@ class Creature(object):
     def passiveActions(self):
         if (self.stamina >= self.maxStamina * 0.5) and (self.health != self.maxHealth):
             self.health += 1
-            if self.stamina > self.maxStamina:  self.stamina = self.maxHealth
+            if self.stamina > self.maxStamina:  self.stamina = self.maxStamina
+            if self.health > self.maxHealth:  self.health = self.maxHealth
 
 
     def chooseAction(self, world, actionOrder):
@@ -106,13 +109,15 @@ class Bush(Creature):
             self.stamina = self.stamina / 3
             self.health = self.health / 3
             actionOrder.append(Bush(rollDice(10), rollDice(0), rollDice(0), birthSpot))
+            actionOrder[-1].health -= actionOrder[-1].health*0.7
+            actionOrder[-1].stamina -= actionOrder[-1].stamina*0.7
             world.setCreature( birthSpot[0], birthSpot[1], actionOrder[-1])
 
     def chooseAction(self, world, actionOrder):
         if self.stamina != self.maxStamina:
             self.eat()
         elif self.stamina == self.maxStamina and self.health == self.maxHealth:
-            # self.reproduce(world, actionOrder)
+            self.reproduce(world, actionOrder)
             self.stamina -= 2
             pass
 

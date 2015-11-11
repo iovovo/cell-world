@@ -3,8 +3,6 @@ from terrains import *
 from creatures import *
 import random
 
-#random.randint(0,2)
-
 actionOrder = []
 
 class World(object):
@@ -21,19 +19,16 @@ class World(object):
 
 def sparkles(world):
 	for i in range(numberOfCreatures[0]):
-		y = random.randint(0,size-1)
-		x = random.randint(0,size-1)
+		y, x = random.randint(0,size-1), random.randint(0,size-1)
 		actionOrder.append(Wolf(rollDice(6), rollDice(4), rollDice(5), [y,x]))
 		world.setCreature( y, x, actionOrder[-1])
 	for i in range(numberOfCreatures[1]):
-		y = random.randint(0,size-1)
-		x = random.randint(0,size-1)
+		y, x = random.randint(0,size-1), random.randint(0,size-1)
 		actionOrder.append(Deer(rollDice(4), rollDice(6), rollDice(5), [y,x]))
 		world.setCreature( y, x, actionOrder[-1])
 	for i in range(numberOfCreatures[2]):
-		# y = random.randint(0,size-1)
-		# x = random.randint(0,size-1)
-		y, x = 0, 0
+		y, x = random.randint(0,size-1), random.randint(0,size-1)
+		# y, x = 0, 0
 		actionOrder.append(Bush(rollDice(10), rollDice(0), rollDice(0), [y,x]))
 		world.setCreature( y, x, actionOrder[-1])
 
