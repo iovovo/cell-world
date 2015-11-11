@@ -46,28 +46,44 @@ def draw_rect(x, y, width, height):
 	glEnd()                                            # done drawing a rectangle
 
 def draw():                                            # ondraw is called all the time
+	global generationCount
 	# newCount = [Creature.bushes, Creature.deers, Creature.wolves]
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT) # clear the screen
 	glLoadIdentity()                                   # reset position
 	refresh2d(width, height)                           # set mode to 2d
 	###
-	# global pause
-	# if pause == 0:
-	# 	roam()
-	# 	pause = 1
+
 	time.sleep(delay)
 	roam()
 	printField()
-
+	generationCount += 1
+	print generationCount
+	if generationCount >= maxGeneration:
+		time.sleep(5)
+		exit()
 
 	###
 	glutSwapBuffers()                                  # important for double buffering
 
-glutInit()                                             # initialize glut
-glutInitDisplayMode(GLUT_RGBA | GLUT_DOUBLE | GLUT_ALPHA | GLUT_DEPTH)
-glutInitWindowSize(width, height)               	# set window size
-glutInitWindowPosition(0, 0)                       	# set window position
-window = glutCreateWindow("Cell World")          	# create window with title
-glutDisplayFunc(draw)                              	# set draw function callback
-glutIdleFunc(draw)                                     	# draw all the time
-glutMainLoop()                                         	# start everything
+def screen():
+	glutInit()                                             # initialize glut
+	glutInitDisplayMode(GLUT_RGBA | GLUT_DOUBLE | GLUT_ALPHA | GLUT_DEPTH)
+	glutInitWindowSize(width, height)               	# set window size
+	glutInitWindowPosition(0, 0)                       	# set window position
+	window = glutCreateWindow("Cell World")          	# create window with title
+	glutDisplayFunc(draw)                              	# set draw function callback
+	glutIdleFunc(draw)                                     	# draw all the time
+	glutMainLoop()                                         	# start everything
+
+def main(visualMode):
+	i = 0
+	if visualMode == True:
+		screen()
+	elif visualMode == False:
+		while i <= maxGeneration:
+			roam()
+			i += 1
+		else:
+			print map(lambda x: printStats(x), actionOrder)
+
+main(visualMode)
