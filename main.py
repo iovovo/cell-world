@@ -22,6 +22,8 @@ def printField():
 
 def roam():
 	sortActionOrder(actionOrder)
+	i = 0
+	while i < len(actionOrder)
 	for turn in range(len(actionOrder)):
 		actionOrder[turn].chooseAction(world, actionOrder)
 		actionOrder[turn].passiveActions()
@@ -86,4 +88,4 @@ def main(visualMode):
 		else:
 			print map(lambda x: printStats(x), actionOrder)
 
-main(visualMode)
+main(True)
