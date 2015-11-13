@@ -3,8 +3,6 @@ from terrains import *
 from creatures import *
 import random
 
-actionOrder = []
-
 class World(object):
 	map = [ [ [Terrain(0), None] for y in range(size)] for x in range(size) ]
 
@@ -40,4 +38,5 @@ def getKey(creature):
     return creature.initiative
 
 world = World()
+actionOrder = []
 sparkles(world)
