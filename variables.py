@@ -1,5 +1,9 @@
 import random
 
+visualMode = True
+maxGeneration = 50
+generationCount = 0
+
 size=16
 border=0.5
 squareSize=[size,size]
@@ -12,7 +16,7 @@ multW, multH = width/size, height/size
 
 pause = 0
 numberOfCreatures = [size/2, size, size*2]
-numberOfCreatures = [1,1,1]
+# numberOfCreatures = [1,1,1]
 
 def rollDice(sides):
     if sides <= 1:
@@ -21,8 +25,4 @@ def rollDice(sides):
         return random.randint(1, sides)
 
 def printStats(creature):
-    print creature.__class__.__name__, creature.position,"HP", creature.health, "/", creature.maxHealth, ", Sta", creature.stamina, "/", creature.maxStamina,
-    print "Str, Agi, Int:", creature.strength, creature.agility, creature.intelligence,
-    print "Sight", creature.sight
-    print range(creature.position[0]-creature.sight, creature.position[0]+creature.sight+1)
-    print range(creature.position[1]-creature.sight, creature.position[1]+creature.sight+1)
+    print creature.__class__.__name__, creature.position,"HP", creature.health, "/", creature.maxHealth, ", Sta", creature.stamina, "/", creature.maxStamina, "Str, Agi, Int:", creature.strength, creature.agility, creature.intelligence, "Sight", creature.sight
